@@ -1,0 +1,352 @@
+Vlad Seryakov
+vlad@crystalballinc.com
+
+ System Tcl extensions, based on ettcl 
+
+--------------------------------------------------------------------
+
+
+                       Usage
+                     ---------
+
+ For standalone TCL extension module, just load it in tclsh as load /usr/local/lib/tclsys.so. 
+ After that all ns_sys* commands are available.
+ 
+ For AOLserver module add ns_param nssys bin/nssys.so to nsd.tcl
+
+--------------------------------------------------------------------
+
+
+                       API Description
+                     ------------------
+
+ ns_syssync
+
+ Force changed blocks to disk, update the super block.
+
+ Usage:
+   ns_syssync
+
+ Returns:
+   nothing
+
+--------------------------------------------------------------------
+
+ ns_syssignal
+
+ Installs a new signal handler for the signal with number sig_name.
+
+ Usage:
+   ns_syssignal sig_name handler
+
+   sig_name      - signal name (ex. CHLD)
+   handler       - a TCL command or DEFAULT or IGNORE
+
+ Returns:
+   nothing
+--------------------------------------------------------------------
+
+ ns_syskill
+
+  Sends the specified signal to the specified process or process group
+
+ Usage:
+   ns_syskill ?-sig_name? pid
+
+   sig_name      - signal name (ex. CHLD)
+   pid           - process id
+
+ Returns:
+   nothing
+--------------------------------------------------------------------
+
+ ns_sysnice
+
+ Adds inc to the nice value for the calling pid.  (A large nice
+ value means a low priority.)  Only the superuser may specify a negative
+ increment, or priority increase
+
+ Usage:
+   ns_sysnice level
+
+   level      - priority level
+
+ Returns:
+   nothing
+--------------------------------------------------------------------
+
+ ns_sysexec
+
+ Replaces the current process image with a new process image.
+
+ Usage:
+   ns_sysexec prog arg1 arg2 ...
+
+ Returns:
+   nothing
+--------------------------------------------------------------------
+
+ ns_syswait
+
+ Suspends  execution of the current process until a child has exited
+
+ Usage:
+   ns_syswait ?nohang? ?pid?
+
+   pid      - process id to wait for
+   nohang   - to return immediately if no child has exited
+
+ Returns:
+   exit status
+--------------------------------------------------------------------
+
+ ns_syspipe
+
+ Creates a pair of file descriptors
+
+ Usage:
+   ns_syspipe
+
+ Returns:
+   returns two created channels as a list
+--------------------------------------------------------------------
+
+ ns_sysopentty
+
+ Creates a pair of file descriptors, tty master and a tty slave
+
+ Usage:
+   ns_sysopentty
+
+ Returns:
+   returns two created channels as a list
+--------------------------------------------------------------------
+
+ ns_sysreboot
+
+ Reboots the computer
+
+ Usage:
+   ns_sysreboot
+
+ Returns:
+   nothing
+--------------------------------------------------------------------
+
+ ns_syshalt
+
+ Halts the computer
+
+ Usage:
+   ns_syshalt
+
+ Returns:
+   nothing
+--------------------------------------------------------------------
+
+ ns_sysdup
+
+ Creates a copy of given channel
+
+ Usage:
+   ns_sysdup channel
+
+   channel   - file/socket channel to create a copy from
+
+ Returns:
+   new channel name
+--------------------------------------------------------------------
+
+ ns_sysdup2
+
+ Makes channel2 be the copy of channel1
+
+ Usage:
+   ns_sysdup2 channel1 channel2
+
+   channel1 - file/socket channel to create a copy from
+   channel2 - new channel as a copy of channel1
+
+ Returns:
+   nothing
+--------------------------------------------------------------------
+
+ ns_sysfork
+
+ Creates a child process that differs from the parent process only in its PID
+
+ Usage:
+   ns_sysfork
+
+ Returns:
+  the PID of the child process is returned  in  the  parent's
+  thread  of execution, and a 0 is returned in the child's thread of execution
+--------------------------------------------------------------------
+
+ ns_sysfcopy
+
+ Copies contents of channel1 into channel2
+
+ Usage:
+   ns_sysfcopy channel1 channel2
+
+   channel1 - file/socket channel to copy from
+   channel2 - file/socket channel to copy to
+
+ Returns:
+   nothing
+--------------------------------------------------------------------
+
+ ns_syschmod
+
+ Change the mode of given file
+
+ Usage:
+   ns_syschmod pathname mode
+   ns_syschmod mode pathname [...]     (ARub,Nov 2001)
+
+  mode      - mode for file (use 0xxx for octal)
+
+ Returns:
+   nothing
+--------------------------------------------------------------------
+
+ ns_syschown
+
+ Change the owner of given file
+
+ Usage:
+   ns_syschown pathname uid ?gid?
+
+ Returns:
+   nothing
+--------------------------------------------------------------------
+
+ ns_sysumask
+
+ Sets the umask to mask & 0777
+
+ Usage:
+   ns_sysumask mask
+
+  mask      - umask (use 0xxx for octal)
+
+ Returns:
+  Previous octal umask value
+
+
+ ns_sysmknod
+
+ Creates a filesystem node (file, device special file
+ or named pipe) named pathname, specified by mode and dev
+
+ Usage:
+   ns_sysmknod file_type pathname mode [major minor]
+
+  file_type - one of 'S_IFREG','S_IFCHR' or 'c' or 'u',
+                'S_IFBLK' or 'b',S_IFIFO or 'p'
+  pathname  - quite obvious
+  mode      - octal mode for new file
+  major     - major number for new device special file
+  minor     - minor number for new device special file
+
+ major & minor are only valid (& necessary) if file_type is
+ S_IFCHR or S_IFBLK
+
+ minor numbers are restricted to range 0-255
+
+ Returns:
+   nothing
+--------------------------------------------------------------------
+
+ ns_syslog
+
+ Usage:
+   ns_syslog ?-facility f -options o -ident i? priority message
+
+  facility    - kernel, cron, authpriv, mail, local0, local1, daemon, local2,
+                news, local3, local4, local5, local6, syslog, local7, auth, uucp, lpr, user
+  options     - list with any of { CONS NDELAY PERROR PID ODELAY NOWAIT }
+  ident       - ident is prepended to every message, and is typically the program name
+  priority    - info, alert, emerg, err, notice, warning, error, crit, debug
+
+ Returns:
+   nothing
+
+--------------------------------------------------------------------
+ ns_sysstatfs
+ 
+ Returns information about a mounted file system.
+ 
+ Usage:
+   ns_sysstatfs path
+ 
+  path is the path name of any file within the mounted  filesystem.
+ 
+ Returns:
+  list with file system info as name value pairs
+      f_bsize    file system block size
+      f_frsize   fragment size
+      f_blocks   size of fs in f_frsize units
+      f_bfree    # free blocks
+      f_bavail   # free blocks for non-root
+      f_files    # inodes
+      f_ffree    # free inodes
+      f_favail   # free inodes for non-root
+      f_fsid     file system id
+      f_flag     mount flags
+      f_namemax  maximum filename length
+
+--------------------------------------------------------------------
+
+ sys_ioctl
+ 
+ Manipulate the underlying device parameters of special files.  
+ 
+ Usage:
+   sys_ioctl dev req ?arg?
+
+  dev      - open device channel
+  req      - request
+ 
+ Returns:
+    nothing
+
+--------------------------------------------------------------------
+
+ ns_sysv4l grab
+ 
+ Grab a image from Video4Linux device.
+ 
+ Usage:
+    ns_sysv4l grab ?-device d -file f -width w -height h -norm n -input i -mmap 0|1 -brightness b -contrast c -depth d?
+ 
+   device     - default /dev/video0
+   mmap       - default 0, if 1 use mmap, otherwise use read
+   norm       - default 1, 0 = PAL; 1 = NTSC; 2 = SECAM; 3 = PAL-Nc; 4 = PAL-M; 5 = PAL-N; 6 = NTSC-JP; 7 = PAL-60;
+   input      - defaut 1, 0 = Television; 1 = Composite1; 2 = S-Video; 3 = Composite3;
+   width      - default 320
+   height     - default 200
+   brightness - default 32768, max 65536
+   contrast   - default 32768, max 65536
+   depth      - default 3, can be 1, 2 or 3
+   file       - default v4lgrab.png
+ 
+ Returns:
+   nothing
+
+--------------------------------------------------------------------
+
+  sys_mktemp
+
+   Generates a unique temporary file name
+
+  Usage:
+    sys_mktemp ?template?
+
+    template         - The last six characters of template must be  XXXXXX  and  these
+                       are  replaced  with  a  string that makes the filename unique
+  Returns:
+    file name
+
+--------------------------------------------------------------------
